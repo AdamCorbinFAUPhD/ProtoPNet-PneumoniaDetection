@@ -5,12 +5,12 @@ num_classes = 200
 prototype_activation_function = 'log'
 add_on_layers_type = 'regular'
 
-experiment_run = '003'
+experiment_run = '001'
 
-data_path = './datasets/cub200_cropped/'
-train_dir = data_path + 'train_cropped_augmented/'
-test_dir = data_path + 'test_cropped/'
-train_push_dir = data_path + 'train_cropped/'
+data_path = './datasets/rsna-pneumonia-detection-challenge-jpeg/'
+train_dir = data_path + 'train_augmented/'
+test_dir = data_path + 'test/'
+train_push_dir = data_path + 'train/'
 train_batch_size = 80
 test_batch_size = 100
 train_push_batch_size = 75
