@@ -122,7 +122,12 @@ if __name__ == '__main__':
         print("Time to convert dmc to jpeg")
         for f in Path(zip_folder).glob("stage_2_train_images/*.dcm"):
 
-            file_split = str(f).split("/")
+            if "/" in str(f):
+                file_split = str(f).split("/")
+            elif "\\" in str(f):
+                file_split = str(f).split("\\")
+            else:
+                file_split = []
             print(file_split)
             # skip test
             if "test" in file_split[2]:
