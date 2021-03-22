@@ -5,9 +5,9 @@ num_classes = 200
 prototype_activation_function = 'log'
 add_on_layers_type = 'regular'
 
-experiment_run = '001'
+experiment_run = '002'
 
-data_path = './datasets/rsna-pneumonia-detection-challenge-jpeg/'
+data_path = './datasets/rsna-pneumonia-detection-challenge-jpeg-small_set/'
 train_dir = data_path + 'train_augmented/'
 test_dir = data_path + 'test/'
 train_push_dir = data_path + 'train/'
