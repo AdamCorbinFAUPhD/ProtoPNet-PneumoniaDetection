@@ -165,6 +165,12 @@ def save_prototype_original_img_with_bbox(fname, epoch, index,
     plt.imsave(fname, p_img_rgb)
 
 
+def pil_loader(path):
+    # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
+    with open(path, 'rb') as f:
+        img = Image.open(f)
+        return img.convert('RGB')
+
 def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
                      bbox_width_start, bbox_width_end, color=(0, 255, 255)):
     img_bgr_uint8 = cv2.cvtColor(np.uint8(255 * img_rgb), cv2.COLOR_RGB2BGR)
@@ -191,10 +197,11 @@ preprocess_grayscale = transforms.Compose(
      ])
 
 img_pil = Image.open(test_image_path)
-if img_pil.mode == "RGB":
-    img_tensor = preprocess(img_pil)
-else:
-    img_tensor = preprocess_grayscale(img_pil)
+# force the image to be in RGB type
+if img_pil.mode != "RGB":
+    img_pil = pil_loader(test_image_path)
+
+img_tensor = preprocess(img_pil)
 img_variable = Variable(img_tensor.unsqueeze(0))
 
 images_test = img_variable.cuda()
