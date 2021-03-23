@@ -1,11 +1,11 @@
 base_architecture = 'vgg19'
 img_size = 224
 prototype_shape = (2000, 128, 1, 1)
-num_classes = 200
+num_classes = 2
 prototype_activation_function = 'log'
 add_on_layers_type = 'regular'
 
-experiment_run = '002'
+experiment_run = '004'
 
 data_path = './datasets/rsna-pneumonia-detection-challenge-jpeg-small_set/'
 train_dir = data_path + 'train_augmented/'
