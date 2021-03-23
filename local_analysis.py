@@ -131,7 +131,7 @@ def save_preprocessed_img(fname, preprocessed_imgs, index=0):
     undo_preprocessed_img = undo_preprocessed_img[0]
     undo_preprocessed_img = undo_preprocessed_img.detach().cpu().numpy()
     undo_preprocessed_img = np.transpose(undo_preprocessed_img, [1,2,0])
-    
+
     plt.imsave(fname, undo_preprocessed_img)
     return undo_preprocessed_img
 
@@ -139,7 +139,7 @@ def save_prototype(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch), 'prototype-img'+str(index)+'.png'))
     #plt.axis('off')
     plt.imsave(fname, p_img)
-    
+
 def save_prototype_self_activation(fname, epoch, index):
     p_img = plt.imread(os.path.join(load_img_dir, 'epoch-'+str(epoch),
                                     'prototype-img-original_with_self_act'+str(index)+'.png'))
@@ -170,14 +170,22 @@ def imsave_with_bbox(fname, img_rgb, bbox_height_start, bbox_height_end,
     plt.imsave(fname, img_rgb_float)
 
 # load the test image and forward it through the network
-preprocess = transforms.Compose([
-   transforms.Resize((img_size,img_size)),
+preprocess = transforms.Compose([transforms.Resize((img_size,img_size)),
+   transforms.ToTensor(),
+   normalize
+])
+
+preprocess_grayscale = transforms.Compose([transforms.Resize((img_size,img_size)),
+    transforms.Normalize((0.5), (0.5)),
    transforms.ToTensor(),
    normalize
 ])
 
 img_pil = Image.open(test_image_path)
-img_tensor = preprocess(img_pil)
+if img_pil.mode == "RGB":
+    img_tensor = preprocess(img_pil)
+else:
+    img_tensor = preprocess_grayscale(img_pil)
 img_variable = Variable(img_tensor.unsqueeze(0))
 
 images_test = img_variable.cuda()
@@ -232,11 +240,11 @@ for i in range(1,11):
         log('prototype connection identity: {0}'.format(prototype_max_connection[sorted_indices_act[-i].item()]))
     log('activation value (similarity score): {0}'.format(array_act[-i]))
     log('last layer connection with predicted class: {0}'.format(ppnet.last_layer.weight[predicted_cls][sorted_indices_act[-i].item()]))
-    
+
     activation_pattern = prototype_activation_patterns[idx][sorted_indices_act[-i].item()].detach().cpu().numpy()
     upsampled_activation_pattern = cv2.resize(activation_pattern, dsize=(img_size, img_size),
                                               interpolation=cv2.INTER_CUBIC)
-    
+
     # show the most highly activated patch of the image by this prototype
     high_act_patch_indices = find_high_activation_crop(upsampled_activation_pattern)
     high_act_patch = original_img[high_act_patch_indices[0]:high_act_patch_indices[1],
@@ -254,7 +262,7 @@ for i in range(1,11):
                      bbox_height_end=high_act_patch_indices[1],
                      bbox_width_start=high_act_patch_indices[2],
                      bbox_width_end=high_act_patch_indices[3], color=(0, 255, 255))
-    
+
     # show the image overlayed with prototype activation map
     rescaled_activation_pattern = upsampled_activation_pattern - np.amin(upsampled_activation_pattern)
     rescaled_activation_pattern = rescaled_activation_pattern / np.amax(rescaled_activation_pattern)
@@ -306,11 +314,11 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
             log('prototype connection identity: {0}'.format(prototype_max_connection[prototype_index]))
         log('activation value (similarity score): {0}'.format(prototype_activations[idx][prototype_index]))
         log('last layer connection: {0}'.format(ppnet.last_layer.weight[c][prototype_index]))
-        
+
         activation_pattern = prototype_activation_patterns[idx][prototype_index].detach().cpu().numpy()
         upsampled_activation_pattern = cv2.resize(activation_pattern, dsize=(img_size, img_size),
                                                   interpolation=cv2.INTER_CUBIC)
-        
+
         # show the most highly activated patch of the image by this prototype
         high_act_patch_indices = find_high_activation_crop(upsampled_activation_pattern)
         high_act_patch = original_img[high_act_patch_indices[0]:high_act_patch_indices[1],
@@ -328,7 +336,7 @@ for i,c in enumerate(topk_classes.detach().cpu().numpy()):
                          bbox_height_end=high_act_patch_indices[1],
                          bbox_width_start=high_act_patch_indices[2],
                          bbox_width_end=high_act_patch_indices[3], color=(0, 255, 255))
-        
+
         # show the image overlayed with prototype activation map
         rescaled_activation_pattern = upsampled_activation_pattern - np.amin(upsampled_activation_pattern)
         rescaled_activation_pattern = rescaled_activation_pattern / np.amax(rescaled_activation_pattern)
