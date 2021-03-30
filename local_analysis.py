@@ -266,14 +266,15 @@ for i in range(1, 11):
     high_act_patch_indices = find_high_activation_crop(upsampled_activation_pattern)
     high_act_patch = original_img[high_act_patch_indices[0]:high_act_patch_indices[1],
                      high_act_patch_indices[2]:high_act_patch_indices[3], :]
-    log('most highly activated patch of the chosen image by this prototype:')
+
     # plt.axis('off')
-    plt.imsave(os.path.join(save_analysis_path, 'most_activated_prototypes',
-                            'most_highly_activated_patch_by_top-%d_prototype.png' % i),
+    file_path =  os.path.join(save_analysis_path, 'most_activated_prototypes', 'most_highly_activated_patch_by_top-%d_prototype.png' % i)
+    log(f'most highly activated patch of the chosen image by this prototype:{file_path}')
+    plt.imsave(file_path,
                high_act_patch)
-    log('most highly activated patch by this prototype shown in the original image:')
-    imsave_with_bbox(fname=os.path.join(save_analysis_path, 'most_activated_prototypes',
-                                        'most_highly_activated_patch_in_original_img_by_top-%d_prototype.png' % i),
+    file_path = os.path.join(save_analysis_path, 'most_activated_prototypes', 'most_highly_activated_patch_in_original_img_by_top-%d_prototype.png' % i)
+    log(f'most highly activated patch by this prototype shown in the original image: {file_path}')
+    imsave_with_bbox(fname=file_path,
                      img_rgb=original_img,
                      bbox_height_start=high_act_patch_indices[0],
                      bbox_height_end=high_act_patch_indices[1],
@@ -287,11 +288,10 @@ for i in range(1, 11):
     heatmap = np.float32(heatmap) / 255
     heatmap = heatmap[..., ::-1]
     overlayed_img = 0.5 * original_img + 0.3 * heatmap
-    log('prototype activation map of the chosen image:')
+    file_path = os.path.join(save_analysis_path, 'most_activated_prototypes', 'prototype_activation_map_by_top-%d_prototype.png' % i)
+    log(f'prototype activation map of the chosen image:{file_path}')
     # plt.axis('off')
-    plt.imsave(os.path.join(save_analysis_path, 'most_activated_prototypes',
-                            'prototype_activation_map_by_top-%d_prototype.png' % i),
-               overlayed_img)
+    plt.imsave(file_path, overlayed_img)
     log('--------------------------------------------------------------')
 
 ##### PROTOTYPES FROM TOP-k CLASSES
